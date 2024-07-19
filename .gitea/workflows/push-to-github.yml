@@ -15,5 +15,5 @@ jobs:
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          repository: https://github.com/berzdev/fokus
+          repository: fokus
           branch: ${{ github.ref }}
