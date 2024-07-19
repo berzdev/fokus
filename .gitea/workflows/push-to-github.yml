@@ -12,8 +12,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GH_TOKEN }}
-          repository: fokus
-          branch: ${{ github.ref }}
+        run: |
+          git remote rename origin upstream
+          git remote add origin https://${{ secrets.GH_TOKEN_APP }}:${{ secrets.GH_TOKEN }}@github.com/berzdev/fokus.git
+          git push -u origin main
