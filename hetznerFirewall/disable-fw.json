@@ -1,0 +1,14 @@
+{
+    "rules": [
+        {
+            "direction": "out",
+            "protocol": "icmp",
+            "port": null,
+            "source_ips": [],
+            "destination_ips": [
+                "1.1.1.1/32"
+            ],
+            "description": null
+        }
+    ]
+}

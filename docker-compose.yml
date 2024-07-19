@@ -1,0 +1,11 @@
+services:
+  fokus:
+    image: berzdev/fokus:latest
+    restart: unless-stopped
+    ports:
+      - '8080:8080'
+    environment:
+      API_TOKEN: demotoken
+      HETZNER_TOKEN: hetzneraccesstokenwithrw
+      HETZNER_FW_ID: 123456
+

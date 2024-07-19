@@ -1,0 +1,18 @@
+name: Build and publish to docker registry
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '*README.org'
+      - 'docs/*'
+      - '**.yml'
+
+jobs:
+  upload_to_docker:
+    uses: pb/cicd-actions/.gitea/workflows/docker/build-image.yml@master
+    with:
+      Imagename: 'berzdev/fokus:latest'
+      Platforms: 'linux/arm/v7, linux/amd64'
+    secrets: inherit

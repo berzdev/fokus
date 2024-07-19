@@ -1,0 +1,120 @@
+#+PROPERTY: header-args :var APIPATH="http://demohost/api/v1" :var APIAUTH="?token=demotoken&service=xyz" :results raw
+#+title: Fokus
+* Description
+Focus was developed to make our networked world more human-friendly.
+
+Focus makes it possible to block distractions without using up a lot of willpower.
+
+For example, computer systems can be blocked after a set period of use per day. Or disruptive internet sites can be blocked (YouTube, Amazon, Reddit...).
+
+I personally use Fokus for the following use cases, for example:
+1. Block Instant Messengers after 10 minutes a day (Hetzner VM)
+ - No longer distracted by constant messages
+ - Peace of mind to live without being permanently available.
+ - More focused during the day
+* Concept
+[[./docs/concept.svg]]
+* Quick Start
+*Requirements:*
+- Hetzner Cloud Account
+- Hetzner Cloud API Token with ~RW Access~
+- Hetzner Cloud VServer + Firewall
+
+1. Download the repo ~git clone ...~
+2. Edit ~docker-compose.yml~ with your Hetzner API Key and Hetzner Firewall ID
+3. Run ~docker compose up -d~
+4. Now you should be able to make API calls
+#+begin_src bash
+  curl http://demohost/api/v1/service/status?token=yourtoken&service=chatx
+#+end_src
+
+* Services
+A service describes a system with which this API interacts.
+
+Each service has a fixed time per day.
+After this time has elapsed, the service is set to “off” (switched off).
+For example, access to a VServer can be deactivated after X minutes.
+
+*At the moment following services are supported:*
+- Hetzner Cloud Firewall
+
+One Hetzner Firewall service is currently defined inside the Code:
+#+begin_src go
+  xyz := NewService("xyz", 0, 4).TypeHetznerFirewall(hetznerFirewall{token: os.Getenv("HETZNER_TOKEN"), id: os.Getenv("HETZNER_FW_ID")})
+#+end_src
+* API Reference
+API Basepath: ~http://host:8080/api/v1~
+** /service/on
+Activates a service.
+
+*GET Parameter*
+| Parameter   | Type | Erklärung                       | Req  |
+| ---------   | ---- | ------------------------------- | ---- |
+| token       | str  | Authentifizierungstoken         | true |
+| service     | str  | Servicename                     | true |
+
+*CURL Bsp.*
+#+begin_src bash
+  curl $APIPATH/service/on$APIAUTH
+#+end_src
+
+#+RESULTS:
+{"message":"Service: xyz wurde aktiviert!"}
+
+** /service/off
+Deactivate a service.
+
+*GET Parameter*
+| Parameter   | Type | Erklärung                       | Req  |
+| ---------   | ---- | ------------------------------- | ---- |
+| token       | str  | Authentifizierungstoken         | true |
+| service     | str  | Servicename                     | true |
+
+*CURL Bsp.*
+#+begin_src bash
+  curl $APIPATH/service/off$APIAUTH
+#+end_src
+
+#+RESULTS:
+{"message":"Service: xyz wurde deaktiviert!"}
+
+** /service/status
+Get the status of a service.
+
+*GET Parameter*
+| Parameter   | Type | Erklärung                       | Req  |
+| ---------   | ---- | ------------------------------- | ---- |
+| token       | str  | Authentifizierungstoken         | true |
+| service     | str  | Servicename                     | true |
+
+*CURL Bsp.*
+#+begin_src bash
+  curl $APIPATH/service/status$APIAUTH
+#+end_src
+
+#+RESULTS:
+{
+    "name": "xyz",
+    "art": "hetzner-firewall",
+    "tages_minuten_zaehler": 1,
+    "tages_minuten_limit": 4,
+    "state": false
+}
+
+** /service/limitfill
+Set the time per day to max.
+So you don't have access to the service anymore for the whole day.
+
+*GET Parameter*
+| Parameter   | Type | Erklärung                       | Req  |
+| ---------   | ---- | ------------------------------- | ---- |
+| token       | str  | Authentifizierungstoken         | true |
+| service     | str  | Servicename                     | true |
+
+*CURL Bsp.*
+#+begin_src bash
+  curl $APIPATH/service/limitfill$APIAUTH
+#+end_src
+
+#+RESULTS:
+{"message":"Limit fill ok."}
