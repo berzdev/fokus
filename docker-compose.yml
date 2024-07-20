@@ -2,10 +2,12 @@ services:
   fokus:
     image: berzdev/fokus:latest
     restart: unless-stopped
+    container_name: fokus
     ports:
       - '8080:8080'
     environment:
       API_TOKEN: demotoken
       HETZNER_TOKEN: hetzneraccesstokenwithrw
       HETZNER_FW_ID: 123456
+      SERVICE_CHATX_MIN_LIMIT: 10 #10 minutes limit per day for service "chatx"
 

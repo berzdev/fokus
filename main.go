@@ -226,7 +226,8 @@ func ApiActionCounter(path string, service string, statuscode int) {
 
 func main() {
 	//Define service(s)
-	chatx := NewService("Chatx", 0, 4).TypeHetznerFirewall(hetznerFirewall{token: os.Getenv("HETZNER_TOKEN"), id: os.Getenv("HETZNER_FW_ID")})
+	chatx_min_limit, _ := strconv.Atoi(os.Getenv("SERVICE_CHATX_MIN_LIMIT"))
+	chatx := NewService("Chatx", 0, chatx_min_limit).TypeHetznerFirewall(hetznerFirewall{token: os.Getenv("HETZNER_TOKEN"), id: os.Getenv("HETZNER_FW_ID")})
 	//Declare map of services (for finding & structure)
 	var services = make(map[string]*service)
 	services["chatx"] = &chatx

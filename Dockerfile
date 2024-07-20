@@ -1,9 +1,5 @@
 FROM golang:alpine
 
-ARG API_TOKEN
-ARG HETZNER_TOKEN
-ARG HETZNER_FW_ID
-
 WORKDIR /app
 
 COPY go.mod ./
