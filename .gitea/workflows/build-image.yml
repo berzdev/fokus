@@ -10,9 +10,25 @@ on:
       - 'docker-compose.yml'
 
 jobs:
-  upload_to_docker:
-    uses: pb/cicd-actions/.gitea/workflows/docker/build-image.yml@master
-    with:
-      Imagename: 'berzdev/fokus:latest'
-      Platforms: 'linux/arm/v7, linux/amd64'
-    secrets: inherit
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: berzdev/fokus:latest
+          platforms: 'linux/arm/v7,linux/amd64'
