@@ -1,4 +1,5 @@
 #+PROPERTY: header-args :var APIPATH="http://demohost/api/v1" :var APIAUTH="?token=demotoken&service=xyz" :results raw
+#+author: berzdev
 #+title: Fokus
 * Description
 Focus was developed to make our networked world more human-friendly.
