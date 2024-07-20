@@ -5,9 +5,9 @@ on:
     branches:
       - main
     paths-ignore:
-      - '*README.org'
+      - '**.org'
       - 'docs/*'
-      - '**.yml'
+      - 'docker-compose.yml'
 
 jobs:
   upload_to_docker:
