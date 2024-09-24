@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-co-op/gocron/v2"
 	"github.com/go-playground/validator/v10"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -335,27 +336,47 @@ func main() {
 		}
 	})
 
-	go func() {
-		done := make(chan bool)
-		minuteTicker := time.NewTicker(1 * time.Minute)
-		for {
-			select {
-			case <-done:
-				return
-			case <-minuteTicker.C:
-				//Count service every minute (tick)
-				chatx.MinuteTick()
+	// create a scheduler
+	s, err := gocron.NewScheduler()
+	if err != nil {
+		fmt.Println("Fehler beim start von gocron")
+	}
 
-				//Reset limit
-				//https://stackoverflow.com/questions/66433556/how-to-run-a-job-on-a-specific-time-every-day
-				h, m, _ := time.Now().Clock()
-				if m == 0 && (h == 3) {
-					chatx.LimitReset()
-					fmt.Println("Limit was resetted", chatx.Tages_minuten_zaehler)
-				}
-			}
-		}
-	}()
+	//Reset chatx time every day at 03:30am
+	_, err = s.NewJob(
+		gocron.DailyJob(
+			1,
+			gocron.NewAtTimes(
+				gocron.NewAtTime(3, 30, 0),
+			),
+		),
+		gocron.NewTask(
+			func() {
+				chatx.LimitReset()
+				fmt.Println("Limit was resetted", chatx.Tages_minuten_zaehler)
+			},
+		),
+	)
+	if err != nil {
+		fmt.Println("Fehler beim cron job init")
+	}
+
+	//Tick every minute to chatx
+	_, err = s.NewJob(
+		gocron.DurationJob(
+			time.Minute,
+		),
+		gocron.NewTask(
+			func() {
+				chatx.MinuteTick()
+			},
+		),
+	)
+	if err != nil {
+		fmt.Println("Fehler beim cron job init")
+	}
+
+	s.Start()
 
 	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
 }
